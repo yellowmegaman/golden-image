@@ -14,7 +14,7 @@ steps:
     GOOGLE_CREDENTIALS:
       from_secret: google_credentials
   commands:
-  - packer build gce.json
+  - packer build -force -only=gce golden-image.json
 
 ---
 kind: pipeline
@@ -34,7 +34,7 @@ steps:
     AWS_SECRET_KEY:
       from_secret: aws_secret_key
   commands:
-  - packer build aws.json
+  - packer build -force -only=aws golden-image.json
 
 ---
 kind: pipeline
@@ -52,4 +52,4 @@ steps:
     DIGITALOCEAN_API_TOKEN:
       from_secret: do_token
   commands:
-  - packer build do.json
+  - packer build -force -only=do golden-image.json
