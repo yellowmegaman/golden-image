@@ -42,4 +42,4 @@ Basic flow:
 So there won't be a case of some update failure never again, everything standardized.
 
 ### You may also like :D
-https://github.com/yellowmegaman/terraform-google-consul-nomad-cluster
+[terraform-google-consul-nomad-cluster](https://github.com/yellowmegaman/terraform-google-consul-nomad-cluster)
