@@ -11,6 +11,8 @@ steps:
 - name: build-gce-image
   image: yellowmegaman/container-packer:1.3.3
   environment:
+    GOOGLE_PROJECT:
+      from_secret: google_project
     GOOGLE_CREDENTIALS:
       from_secret: google_credentials
   commands:
