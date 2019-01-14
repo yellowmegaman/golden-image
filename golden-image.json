@@ -1,0 +1,140 @@
+{
+  "variables": {
+    "gce_from":    "debian-9",
+    "gce_zone":    "europe-west4-c",
+    "gce_project": "{{env `GOOGLE_PROJECT`}}",
+    "gce_auth":    "{{env `GOOGLE_CREDENTIALS`}}",
+    "gce_machine": "custom-1-1024",
+    "gce_user":    "provision",
+    "consul_ver":  "1.4.0",
+    "nomad_ver":   "0.8.6",
+    "goss_ver":    "0.3.6",
+    "ct_ver":      "0.19.5",
+    "docker_ver":  "5:18.09.1~3-0",
+    "compose_ver": "1.23.2",
+    "aws_user":    "admin",
+    "aws_owners":  "679593333241",
+    "aws_from":    "*debian-stretch-hvm*",
+    "aws_region":  "eu-central-1",
+    "aws_machine": "t2.micro",
+    "do_from":     "debian-9-x64",
+    "do_region":   "ams3",
+    "do_machine":  "s-1vcpu-1gb",
+    "do_user":     "root",
+    "to":          "golden-debian",
+    "desc":        "packer-golden-image"
+  },
+  "builders": [
+    {
+      "name":                "gce",
+      "type":                "googlecompute",
+      "disk_type":           "pd-ssd",
+      "region":              "{{user `gce_region`}}",
+      "project_id":          "{{user `gce_project`}}",
+      "account_file":        "{{user `gce_auth`}}",
+      "ssh_username":        "{{user `gce_user`}}",
+      "machine_type":        "{{user `gce_machine`}}",
+      "source_image_family": "{{user `gce_from`}}",
+      "zone":                "{{user `gce_zone`}}",
+      "image_name":          "{{user `to`}}",
+      "image_description":   "{{user `desc`}}"
+    },
+    {
+      "name":                    "aws",
+      "type":                    "amazon-ebs",
+      "region":                  "{{user `aws_region`}}",
+      "ssh_username":            "{{user `aws_user`}}",
+      "instance_type":           "{{user `aws_machine`}}",
+      "tags": { "Name":          "{{user `to`}}{{timestamp}}" },
+      "force_deregister":        true,
+      "ami_name":                "{{user `to`}}",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name":                "{{user `aws_from`}}",
+          "root-device-type":    "ebs"
+        },
+        "owners": ["{{user `aws_owners`}}"],
+        "most_recent":           true
+      }
+    },
+    {
+      "name":          "do",
+      "type":          "digitalocean",
+      "api_token":     "{{user `api_token`}}",
+      "image":         "{{user `do_from`}}",
+      "region":        "{{user `do_region`}}",
+      "size":          "{{user `do_machine`}}",
+      "ssh_username":  "{{user `do_user`}}",
+      "snapshot_name": "{{user `to`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "environment_vars": [
+	"DEBIAN_FRONTEND=noninteractive",
+        "CONSUL_VERSION={{user `consul_ver`}}",
+        "NOMAD_VERSION={{user `nomad_ver`}}",
+        "GOSS_VERSION={{user `goss_ver`}}",
+        "CONSUL_TEMPLATE_VERSION={{user `ct_ver`}}",
+        "DOCKER_COMPOSE_VERSION={{user `compose_ver`}}",
+        "DOCKER_VERSION={{user `docker_ver`}}"
+      ],
+      "execute_command": "echo 'packer' | sudo -S bash -c '{{ .Vars }} {{ .Path }}'",
+      "scripts": [
+        "provision/{{build_name}}.sh",
+	"provision/consul.sh",
+	"provision/nomad.sh",
+	"provision/consul-template.sh",
+	"provision/docker-compose.sh",
+	"provision/goss.sh",
+	"provision/rexray.sh"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "configuration",
+      "destination": "/tmp"
+    },
+    {
+      "type": "file",
+      "source": "configuration/rexray.yml.{{build_name}}",
+      "destination": "/tmp/configuration/config.yml"
+    },
+    {
+      "type": "shell",
+      "expect_disconnect": true,
+      "execute_command": "echo 'packer' | sudo -S bash -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "CONSUL_VERSION={{user `consul_ver`}}",
+        "NOMAD_VERSION={{user `nomad_ver`}}",
+        "CONSUL_TEMPLATE_VERSION={{user `ct_ver`}}",
+        "DOCKER_COMPOSE_VERSION={{user `compose_ver`}}",
+        "DOCKER_VERSION={{user `docker_ver`}}"
+      ],
+      "inline": [
+        "mv /tmp/configuration/consul.service /lib/systemd/system/consul.service",
+        "mv /tmp/configuration/nomad.service /lib/systemd/system/nomad.service",
+        "mv /tmp/configuration/config.yml /etc/rexray/config.yml",
+        "mv /tmp/configuration/goss.yml /etc/goss/goss.yml",
+	"mv /tmp/configuration/rsyslog /etc/logrotate.d/rsyslog",
+	"chown -R root:root /etc/logrotate.d/rsyslog",
+	"mv /etc/cron.daily/logrotate /etc/cron.hourly/logrotate",
+	"echo 'ENABLED=true' | tee /etc/default/sysstat",
+        "goss --gossfile /etc/goss/goss.yml validate",
+	"systemctl daemon-reload",
+	"systemctl enable rexray",
+        "sudo systemctl reboot"
+      ]
+    },
+    {
+      "type": "shell",
+      "pause_before": "1m",
+      "inline": [
+        "echo Reboot successful!"
+      ]
+    }
+  ]
+}
+

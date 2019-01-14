@@ -1,0 +1,4 @@
+rexray:
+  logLevel: info 
+libstorage:
+  service: gcepd

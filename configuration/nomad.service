@@ -1,0 +1,19 @@
+[Unit]
+Description=Nomad service
+After=network.target consul.service docker.service
+
+[Service]
+Type=simple
+Environment=GOMAXPROCS=`nproc`
+ExecStart=/usr/bin/nomad agent -config=/etc/nomad
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TimeoutStartSec=0
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
