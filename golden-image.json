@@ -29,7 +29,7 @@
       "name":                "gce",
       "type":                "googlecompute",
       "disk_type":           "pd-ssd",
-      "region":              "{{user `gce_region`}}",
+      "region":              "{{user `gce_zone`}}",
       "project_id":          "{{user `gce_project`}}",
       "account_file":        "{{user `gce_auth`}}",
       "ssh_username":        "{{user `gce_user`}}",
