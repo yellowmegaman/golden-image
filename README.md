@@ -1,4 +1,5 @@
-# Hashicorp Packer templates to create immutable infrastructure image (golden image) ami/disk images in GCP/AWS/Digitalocean
+# Hashicorp Packer templates to create immutable infrastructure images. (golden images)
+Here are the templates to create ami/disk images in GCP/AWS/Digitalocean
 
 Combined packer template to create image with:
 - debian stable (can be parameterized)
