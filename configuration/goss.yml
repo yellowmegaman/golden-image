@@ -13,6 +13,20 @@ file:
     group: root
     filetype: file
     contains: []
+  /etc/default/sysstat:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+    contains: [ENABLED=true]
+  /etc/ssh/sshd_config:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+    contains: [PermitRootLogin no]
 package:
   ntp:
     installed: true
@@ -23,10 +37,6 @@ addr:
 port:
   tcp:22:
     listening: true
-#  tcp:4646:
-#    listening: false
-#  tcp:8500:
-#    listening: false
   tcp6:22:
     listening: true
   udp:123:
@@ -34,15 +44,9 @@ port:
   udp6:123:
     listening: true
 service:
-#  consul:
-#    enabled: true
-#    running: true
   docker:
     enabled: true
     running: true
-#  nomad:
-#    enabled: true
-#    running: true
   ntp:
     enabled: true
     running: true
@@ -65,31 +69,33 @@ command:
     - Consul v{{.Env.CONSUL_VERSION}}
     stderr: []
     timeout: 10000
-#  consul kv delete gosstest:
-#    exit-status: 0
-#    stdout:
-#    - 'Success! Deleted key: gosstest'
-#    stderr: []
-#    timeout: 10000
-#  consul kv put gosstest gossvalue:
-#    exit-status: 0
-#    stdout:
-#    - 'Success! Data written to: gosstest'
-#    stderr: []
-#    timeout: 10000
   nomad version:
     exit-status: 0
     stdout:
     - Nomad v{{.Env.NOMAD_VERSION}}
     stderr: []
     timeout: 10000
+  consul-template -version 2>&1:
+    exit-status: 0
+    stdout:
+    - consul-template v{{.Env.CONSUL_TEMPLATE_VERSION}}
+    stderr: []
+    timeout: 10000
+  docker-compose version:
+    exit-status: 0
+    stdout:
+    - docker-compose version {{.Env.DOCKER_COMPOSE_VERSION}}
+    stderr: []
+    timeout: 10000
+  levant version:
+    exit-status: 0
+    stdout:
+    - Levant v{{.Env.LEVANT_VERSION}}
+    stderr: []
+    timeout: 10000
 process:
-#  consul:
-#    running: true
   dockerd:
     running: true
-#  nomad:
-#    running: true
   ntpd:
     running: true
   sshd:

@@ -114,6 +114,7 @@
       "environment_vars": [
         "CONSUL_VERSION={{user `consul_ver`}}",
         "NOMAD_VERSION={{user `nomad_ver`}}",
+        "LEVANT_VERSION={{user `levant_ver`}}",
         "CONSUL_TEMPLATE_VERSION={{user `ct_ver`}}",
         "DOCKER_COMPOSE_VERSION={{user `compose_ver`}}",
         "DOCKER_VERSION={{user `docker_ver`}}"
