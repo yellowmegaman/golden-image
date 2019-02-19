@@ -128,7 +128,7 @@
 	"chown -R root:root /etc/logrotate.d/rsyslog",
 	"mv /etc/cron.daily/logrotate /etc/cron.hourly/logrotate",
 	"echo 'ENABLED=true' | tee /etc/default/sysstat",
-        "goss --gossfile /etc/goss/goss.yml validate",
+        "goss --gossfile /etc/goss/goss.yml --gossfile /tmp/goss-{{build_name}}.yml validate",
 	"systemctl daemon-reload",
 	"systemctl enable rexray",
         "sudo systemctl reboot"

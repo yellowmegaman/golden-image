@@ -20,13 +20,6 @@ file:
     group: root
     filetype: file
     contains: [ENABLED=true]
-  /etc/ssh/sshd_config:
-    exists: true
-    mode: "0644"
-    owner: root
-    group: root
-    filetype: file
-    contains: [PermitRootLogin no]
 package:
   ntp:
     installed: true
