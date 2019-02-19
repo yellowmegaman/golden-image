@@ -19,4 +19,3 @@ useradd -m -s /bin/bash -G sudo,docker cloud
 # Sysctl
 echo "net.ipv4.ip_forward=1" | tee -a /etc/sysctl.conf
 mkdir -p /run/docker/plugins
-echo 'PermitRootLogin no' | tee -a /etc/ssh/sshd_config
