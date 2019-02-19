@@ -1,4 +1,4 @@
-# Hashicorp Packer templates to create immutable infrastructure images. (golden images)
+# Immutable infrastructure images. (golden images)
 Here are the templates to create ami/disk images in GCP/AWS/Digitalocean
 
 Combined packer template to create image with:
@@ -12,6 +12,8 @@ Combined packer template to create image with:
 - [consul-template](https://github.com/hashicorp/consul-template)
 - a bunch of standart system utilities, including enabled sysstat (sar) metrics collector.
 - disabled auto-updates
+
+![image](https://user-images.githubusercontent.com/3943191/53048472-e2c01c80-34a5-11e9-8833-fc90afc7417a.png)
 
 Usage:
 
