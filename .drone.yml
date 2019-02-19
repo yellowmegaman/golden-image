@@ -52,6 +52,6 @@ steps:
   image: yellowmegaman/container-packer:1.3.3
   environment:
     DIGITALOCEAN_API_TOKEN:
-      from_secret: do_token
+      from_secret: digitalocean_api_token
   commands:
   - packer build -force -only=do golden-image.json
