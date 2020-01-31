@@ -80,12 +80,6 @@ command:
     - docker-compose version {{.Env.DOCKER_COMPOSE_VERSION}}
     stderr: []
     timeout: 10000
-  levant version:
-    exit-status: 0
-    stdout:
-    - Levant v{{.Env.LEVANT_VERSION}}
-    stderr: []
-    timeout: 10000
 process:
   dockerd:
     running: true
